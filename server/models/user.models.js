@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs"
+import jwt from "jsonwebtoken"
 
 const userSchema=new mongoose.Schema(
     {
@@ -19,6 +20,9 @@ const userSchema=new mongoose.Schema(
         isAdmin:{
             type:Boolean,
             default:false,
+        },
+        refreshToken:{
+            type:String
         }
     },{
         timestamps:true
@@ -38,6 +42,19 @@ next();
 //match the passwords during login
 userSchema.methods.matchPassword=async function(enteredPassword){
     return await bcrypt.compare(enteredPassword,this.password)
+}
+
+userSchema.methods.generateAccessToken=function(){
+    return jwt.sign({
+        _id:this._id,
+        email:this.email,
+        isAdmin:this.isAdmin
+    },"pvLNdidr8PGZidiLttUlrFGrLlMVTAE5",{ expiresIn: "15m" }
+)}
+userSchema.methods.generateRefreshToken=function(){
+    return jwt.sign({
+        _id:this._id
+    },"5U8m3dvBRS95a6C8Io83m5IQPni5CvWQ",{ expiresIn: "7d" })
 }
 
 export const User=mongoose.model("User",userSchema)
