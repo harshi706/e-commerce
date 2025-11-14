@@ -46,7 +46,46 @@ const login=async(req,res)=>{
         return res.status(500).json({success:false,message:"Login failed"})
     }
 }
-const refreshAccessToken=async(req,res)=>{
 
+const refreshAccessToken=async(req,res)=>{
+    try{
+        const {refreshToken}=req.body;
+        if(!refreshToken){
+            return res.status(400).json({success:false,message:"No refresh token found"})
+        }
+        const user=await User.findOne({refreshToken})
+        if(!user){
+            return res.status(401).json({success:false,message:"No user found with this refresh token"})
+        }
+        jwt.verify(refreshToken,"5U8m3dvBRS95a6C8Io83m5IQPni5CvWQ",(err,decoded)=>{
+            if(err){
+            return res.status(401).json({success:false,message:"Verification fails for refresh token"})
+            }
+            const newAccessToken=user.generateAccessToken();
+            return res.status(200).json({success:true,message:"Generated new access token",newAccessToken})
+        })
+
+    }catch(error){
+        return res.status(500).json({success:false,message:"Failed to refresh access token!"})
+    }
 }
-export {signup,login,refreshAccessToken}
+
+const logout=async(req,res)=>{
+    try{
+        const {refreshToken}=req.body;
+        if(!refreshToken){
+            return res.status(400).json({success:false,message:"Empty refresh token"})
+        }
+        const user=await User.findOne({refreshToken});
+        if(!user){
+            return res.status(400).json({success:false,message:"User not found while logging out"})
+        }
+        user.refreshToken=null;
+        await user.save();
+        return res.status(200).json({success:true,message:"User logged out successfully!"})
+    }catch(error){
+        return res.status(500).json({success:false,message:"Logout failed!"})
+    }
+}
+
+export {signup,login,refreshAccessToken,logout}
