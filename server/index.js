@@ -15,6 +15,9 @@ app.get('/',(req,res)=>{
 import userRouter from "./routes/User.routes.js"
 app.use('/auth',userRouter)
 
+import productRouter from "./routes/Product.routes.js"
+app.use('/api/products',productRouter)
+
 const PORT=process.env.PORT || 5000;
 app.listen(PORT,()=>{
     console.log(`app is listening on ${PORT}`);

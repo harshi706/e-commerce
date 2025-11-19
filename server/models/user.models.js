@@ -49,12 +49,12 @@ userSchema.methods.generateAccessToken=function(){
         _id:this._id,
         email:this.email,
         isAdmin:this.isAdmin
-    },"pvLNdidr8PGZidiLttUlrFGrLlMVTAE5",{ expiresIn: "15m" }
+    },process.env.ACCESS_TOKEN_SECRET,{ expiresIn: process.env.ACCESS_EXPIRY }
 )}
 userSchema.methods.generateRefreshToken=function(){
     return jwt.sign({
         _id:this._id
-    },"5U8m3dvBRS95a6C8Io83m5IQPni5CvWQ",{ expiresIn: "7d" })
+    },process.env.REFRESH_TOKEN_SECRET,{ expiresIn: process.env.REFRESH_EXPIRY })
 }
 
 export const User=mongoose.model("User",userSchema)

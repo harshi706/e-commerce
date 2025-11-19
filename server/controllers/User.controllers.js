@@ -57,7 +57,7 @@ const refreshAccessToken=async(req,res)=>{
         if(!user){
             return res.status(401).json({success:false,message:"No user found with this refresh token"})
         }
-        jwt.verify(refreshToken,"5U8m3dvBRS95a6C8Io83m5IQPni5CvWQ",(err,decoded)=>{
+        jwt.verify(refreshToken,process.env.REFRESH_TOKEN_SECRET,(err,decoded)=>{
             if(err){
             return res.status(401).json({success:false,message:"Verification fails for refresh token"})
             }
