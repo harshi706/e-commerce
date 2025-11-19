@@ -13,10 +13,12 @@ app.get('/',(req,res)=>{
 })
 
 import userRouter from "./routes/User.routes.js"
-app.use('/auth',userRouter)
-
+import orderRouter from "./routes/Order.routes.js"
 import productRouter from "./routes/Product.routes.js"
+
+app.use('/auth',userRouter)
 app.use('/api/products',productRouter)
+app.use('/api/orders',orderRouter)
 
 const PORT=process.env.PORT || 5000;
 app.listen(PORT,()=>{
